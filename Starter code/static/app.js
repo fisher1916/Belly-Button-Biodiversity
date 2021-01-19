@@ -1,17 +1,60 @@
-// 1. Use the D3 library to read in `samples.json`.
+// Create placeholders for data
+var names = []
+var metadata = []
+var samples = []
 
-// 2. Create a horizontal bar chart with a dropdown menu to display the top 10 OTUs found in that individual.
+// Fetch data from samples JSON file
 
-// * Use `sample_values` as the values for the bar chart.
+d3.json("samples.json").then((data) => {
+    names = data.names;
+    metadata = data.metadata;
+    samples = data.samples;
 
-// * Use `otu_ids` as the labels for the bar chart.
+    names.forEach((name) => {
+        d3.select("#selDataset").append("option").text(name);
+    })
 
-// * Use `otu_labels` as the hovertext for the chart.
+    function init()  {
 
-var sampleData = data;
+        // **Can we do this instead?**
+        // Select dropdown menu
+        var inputID = d3.select("#selDataset");
+        // Grab dropdown value
+        var inputValue = inputID.property("value");
+        sampleDataset = data.samples.filter(sample => sample.id === inputValue)[0];
 
-console.log(data)
+        // ***The above would replace: sampleData=data.sample.id
 
-// d3.json(data).then(function(data) {
-//     console.log(data);
-//   });
+        // Put sample ID's into a variable
+        sampleDataset = data.sample.id;
+
+        // Put sample values, otu id's, and otu labels into variables
+        sampleValues = sampleDataset.sample_values;
+        otuIDs = sampleDataset.otu_ids;
+        otuLabels = sampleDataset.otu_labels;
+
+        // Select top 10 otu's
+        topSampleValues = sampleValues.slice(0,10).reverse();
+        topOtuIDs = otuIDs.slice(0,10).reverse();
+        topOtuLabels = otuLabels.slice(0,10).reverse();
+
+        // Bar Chart
+        var trace1 = {
+            x: topSampleValues,
+            y: topOtuIDs.map(otuID => `OTU ${otuID}`),
+            text: topOtuLabels,
+            type: "bar",
+            orientation: "h",
+        };
+    
+        // Convert trace into an array
+        var barData = [trace1];
+
+        // Plot bar chart
+        Plotly.newPlot("bar", barData);
+
+
+    }
+});
+
+init();
