@@ -1,18 +1,30 @@
+
+// 2. Create a horizontal bar chart with a dropdown menu to display the top 10 OTUs found in that individual.
+
+// * Use `sample_values` as the values for the bar chart.
+
+// * Use `otu_ids` as the labels for the bar chart.
+
+// * Use `otu_labels` as the hovertext for the chart.
 // Create placeholders for data
 var names = []
 var metadata = []
 var samples = []
 
-// Fetch data from samples JSON file
+// Use the D3 library to read in `samples.json`.
 
 d3.json("samples.json").then((data) => {
     names = data.names;
     metadata = data.metadata;
     samples = data.samples;
 
-    names.forEach((name) => {
-        d3.select("#selDataset").append("option").text(name);
+    // function somefunction_name(name) {
+    //     d3.select("#selDataset").append("option").property('value', name).text(name);
+    // }
+    names.forEach((name)=> {
+        d3.select("#selDataset").append("option").property('value', name).text(name);
     })
+    // names.forEach(somefunction_name)
 
     function init()  {
 
@@ -23,10 +35,7 @@ d3.json("samples.json").then((data) => {
         var inputValue = inputID.property("value");
         sampleDataset = data.samples.filter(sample => sample.id === inputValue)[0];
 
-        // ***The above would replace: sampleData=data.sample.id
 
-        // Put sample ID's into a variable
-        sampleDataset = data.sample.id;
 
         // Put sample values, otu id's, and otu labels into variables
         sampleValues = sampleDataset.sample_values;
@@ -55,6 +64,10 @@ d3.json("samples.json").then((data) => {
 
 
     }
+    init();
 });
 
-init();
+function optionChanged(selected){
+    console.log(selected);
+    // refresh chart
+};
